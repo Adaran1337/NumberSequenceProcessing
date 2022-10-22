@@ -16,6 +16,28 @@ import java.util.stream.IntStream;
 @Slf4j
 @Service
 public class NumberSequenceService {
+
+    /**
+     * Performs the operation depending on the {@link OperationType} provided and returns the result.
+     * @param operation type of operation to perform
+     * @param filePath absolute path to file
+     * @return result of the selected operation
+     * @throws IOException if something goes wrong while reading a file
+     * @throws SequenceException if no sequence is found
+     */
+    public Object performOperation(OperationType operation, String filePath) throws IOException, SequenceException {
+        switch (operation){
+            case MAX_VALUE: return getMaxValue(filePath);
+            case MIN_VALUE: return getMinValue(filePath);
+            case MEDIAN: return getMedian(filePath);
+            case MEAN: return getMean(filePath);
+            case INCREASING_SEQUENCE:
+            case DECREASING_SEQUENCE:
+                return getLongestSequence(filePath, operation);
+            default: throw new IllegalStateException("Provided unsupported operation");
+        }
+    }
+
     /**
      * Finds the maximum number in the file
      * @param filePath absolute path to file

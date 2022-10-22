@@ -30,8 +30,9 @@ public class NumberSequenceController {
     }
 
     @PostMapping("/perform-operation")
-    public <T> ResponseEntity<ApiResponse<T>>  performOperation(@RequestBody NumberSequenceRequest request) {
-        return ResponseEntity.ok(new ApiResponse<>());
+    public ResponseEntity<ApiResponse<Object>>  performOperation(@RequestBody NumberSequenceRequest request) throws SequenceException, IOException {
+        Object data = numberSequenceService.performOperation(request.getOperation(), request.getFilePath());
+        return responseUtils.createResponse(data);
     }
 
     @PostMapping("/get-max-value")
