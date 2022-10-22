@@ -1,4 +1,4 @@
-package com.example.numbersequenceprocessing.data.dto;
+package com.example.numbersequenceprocessing.data.dto.response;
 
 import lombok.Data;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package com.example.numbersequenceprocessing.data.dto;
+package com.example.numbersequenceprocessing.data.dto.request;
 
 import com.example.numbersequenceprocessing.data.enums.OperationType;
 import lombok.Data;
