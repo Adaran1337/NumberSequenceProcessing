@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -20,54 +19,52 @@ public class NumberSequenceService {
     /**
      * Performs the operation depending on the {@link OperationType} provided and returns the result.
      * @param operation type of operation to perform
-     * @param filePath absolute path to file
+     * @param reader file data
      * @return result of the selected operation
      * @throws IOException if something goes wrong while reading a file
      * @throws SequenceException if no sequence is found
      */
-    public Object performOperation(OperationType operation, String filePath) throws IOException, SequenceException {
+    public Object performOperation(OperationType operation, BufferedReader reader)
+            throws IOException, SequenceException {
         switch (operation){
-            case MAX_VALUE: return getMaxValue(filePath);
-            case MIN_VALUE: return getMinValue(filePath);
-            case MEDIAN: return getMedian(filePath);
-            case MEAN: return getMean(filePath);
+            case MAX_VALUE: return getMaxValue(reader);
+            case MIN_VALUE: return getMinValue(reader);
+            case MEDIAN: return getMedian(reader);
+            case MEAN: return getMean(reader);
             case INCREASING_SEQUENCE:
             case DECREASING_SEQUENCE:
-                return getLongestSequence(filePath, operation);
+                return getLongestSequence(reader, operation);
             default: throw new IllegalStateException("Provided unsupported operation");
         }
     }
 
     /**
      * Finds the maximum number in the file
-     * @param filePath absolute path to file
+     * @param reader file data
      * @return maximum number
-     * @throws IOException if something goes wrong while reading a file
      */
-    public Integer getMaxValue(String filePath) throws IOException {
-        IntStream reader = readFile(filePath);
-        return reader.max().orElseThrow();
+    public Integer getMaxValue(BufferedReader reader) {
+        IntStream numbers = readFile(reader);
+        return numbers.max().orElseThrow();
     }
 
     /**
      * Finds the minimum number in the file
-     * @param filePath absolute path to file
+     * @param reader file data
      * @return minimum  number
-     * @throws IOException if something goes wrong while reading a file
      */
-    public Integer getMinValue(String filePath) throws IOException {
-        IntStream reader = readFile(filePath);
-        return reader.min().orElseThrow();
+    public Integer getMinValue(BufferedReader reader) {
+        IntStream numbers = readFile(reader);
+        return numbers.min().orElseThrow();
     }
 
     /**
      * Finds the median of the numbers in the specified file
-     * @param filePath absolute path to file
+     * @param reader file data
      * @return median of the numbers
-     * @throws IOException if something goes wrong while reading a file
      */
-    public Double getMedian(String filePath) throws IOException {
-        List<Double> lines = Files.lines(new File(filePath).toPath())
+    public Double getMedian(BufferedReader reader) {
+        List<Double> lines = reader.lines()
                 .map(Double::parseDouble)
                 .sorted()
                 .collect(Collectors.toList());
@@ -81,39 +78,38 @@ public class NumberSequenceService {
 
     /**
      * Finds the mean of the numbers in the specified file
-     * @param filePath absolute path to file
+     * @param reader file data
      * @return mean of the numbers
-     * @throws IOException if something goes wrong while reading a file
      */
-    public Double getMean(String filePath) throws IOException {
-        IntStream reader = readFile(filePath);
-        return reader.average().orElseThrow();
+    public Double getMean(BufferedReader reader) {
+        IntStream numbers = readFile(reader);
+        return numbers.average().orElseThrow();
     }
 
     /**
      * Finds the longest sequence of consecutive numbers, which increases
-     * @param filePath absolute path to file
+     * @param reader file data
      * @return sequences of increasing numbers
      * @throws IOException if something goes wrong while reading a file
      * @throws SequenceException if no sequence is found
      */
-    public List<List<Integer>> getLongestSequenceOfIncreasingNumbers(String filePath) throws IOException, SequenceException {
-        return getLongestSequence(filePath, OperationType.INCREASING_SEQUENCE);
+    public List<List<Integer>> getLongestSequenceOfIncreasingNumbers(BufferedReader reader) throws IOException, SequenceException {
+        return getLongestSequence(reader, OperationType.INCREASING_SEQUENCE);
     }
 
     /**
      * Finds the longest sequence of consecutive numbers, which decreases
-     * @param filePath absolute path to file
+     * @param reader file data
      * @return sequences of decreasing numbers
      * @throws IOException if something goes wrong while reading a file
      * @throws SequenceException if no sequence is found
      */
-    public List<List<Integer>> getLongestSequenceOfDecreasingNumbers(String filePath) throws IOException, SequenceException {
-        return getLongestSequence(filePath, OperationType.DECREASING_SEQUENCE);
+    public List<List<Integer>> getLongestSequenceOfDecreasingNumbers(BufferedReader reader) throws IOException, SequenceException {
+        return getLongestSequence(reader, OperationType.DECREASING_SEQUENCE);
     }
 
-    private List<List<Integer>> getLongestSequence(String filePath, OperationType operation) throws IOException, SequenceException {
-        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+    private List<List<Integer>> getLongestSequence(BufferedReader reader, OperationType operation)
+            throws IOException, SequenceException {
         List<List<Integer>> sequence = new ArrayList<>();
 
         List<Integer> subSequence = new ArrayList<>();
@@ -146,7 +142,7 @@ public class NumberSequenceService {
         return sequence;
     }
 
-    private IntStream readFile(String filePath) throws IOException {
-        return Files.lines(new File(filePath).toPath()).mapToInt(Integer::parseInt);
+    private IntStream readFile(BufferedReader reader) {
+        return reader.lines().mapToInt(Integer::parseInt);
     }
 }
