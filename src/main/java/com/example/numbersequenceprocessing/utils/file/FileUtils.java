@@ -11,21 +11,20 @@ public class FileUtils {
     /**
      * Reads a file located on the disk at the specified path
      * @param filePath path to local file
-     * @return file reader
+     * @return input stream
      * @throws IOException if something goes wrong while reading a file
      */
-    public BufferedReader readFile(String filePath) throws IOException {
-        return Files.newBufferedReader(new File(filePath).toPath());
+    public InputStream readFile(String filePath) throws IOException {
+        return Files.newInputStream(new File(filePath).toPath());
     }
 
     /**
      * Reads a file transferred from the network
      * @param file {@link MultipartFile}
-     * @return file reader
+     * @return input stream
      * @throws IOException if something goes wrong while reading a file
      */
-    public BufferedReader readFile(MultipartFile file) throws IOException {
-        InputStream is = file.getInputStream();
-        return new BufferedReader(new InputStreamReader(is));
+    public InputStream readFile(MultipartFile file) throws IOException {
+        return file.getInputStream();
     }
 }

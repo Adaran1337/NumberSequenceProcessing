@@ -5,6 +5,7 @@ import com.example.numbersequenceprocessing.data.enums.OperationType;
 import com.example.numbersequenceprocessing.data.exception.SequenceException;
 import com.example.numbersequenceprocessing.service.NumberSequenceService;
 import com.example.numbersequenceprocessing.utils.api.ResponseUtils;
+import com.example.numbersequenceprocessing.utils.checksum.ChecksumUtils;
 import com.example.numbersequenceprocessing.utils.file.FileUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Slf4j
@@ -30,13 +31,15 @@ public class NumberSequenceMultipartFileController {
     private final NumberSequenceService numberSequenceService;
     private final ResponseUtils responseUtils;
     private final FileUtils fileUtils;
+    private final ChecksumUtils checksumUtils;
 
     public NumberSequenceMultipartFileController(NumberSequenceService numberSequenceService,
-                                    ResponseUtils responseUtils,
-                                    FileUtils fileUtils) {
+                                                 ResponseUtils responseUtils,
+                                                 FileUtils fileUtils, ChecksumUtils checksumUtils) {
         this.numberSequenceService = numberSequenceService;
         this.responseUtils = responseUtils;
         this.fileUtils = fileUtils;
+        this.checksumUtils = checksumUtils;
     }
 
     @ApiOperation(value = "Executes the operation with the specified path for the file, passed as a request")
@@ -45,8 +48,9 @@ public class NumberSequenceMultipartFileController {
             @RequestParam("textFile") MultipartFile file,
             @RequestParam("operation") OperationType operation)
             throws IOException, SequenceException {
-        BufferedReader reader = fileUtils.readFile(file);
-        Object data = numberSequenceService.performOperation(operation, reader);
+        InputStream reader = fileUtils.readFile(file);
+        String checksum = checksumUtils.getChecksum(file);
+        Object data = numberSequenceService.performOperation(operation, checksum, reader);
         return responseUtils.createResponse(data);
     }
 
@@ -54,8 +58,9 @@ public class NumberSequenceMultipartFileController {
     @PostMapping(path = "/get-max-value", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<Integer>> getMaxValue(@RequestParam("textFile") MultipartFile file)
             throws IOException {
-        BufferedReader reader = fileUtils.readFile(file);
-        Integer maxValue = numberSequenceService.getMaxValue(reader);
+        InputStream reader = fileUtils.readFile(file);
+        String checksum = checksumUtils.getChecksum(file);
+        Integer maxValue = numberSequenceService.getMaxValue(checksum, reader);
         return responseUtils.createResponse(maxValue);
     }
 
@@ -63,8 +68,9 @@ public class NumberSequenceMultipartFileController {
     @PostMapping(path = "/get-min-value", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<Integer>> getMinValue(@RequestParam("textFile") MultipartFile file)
             throws IOException {
-        BufferedReader reader = fileUtils.readFile(file);
-        Integer minValue = numberSequenceService.getMinValue(reader);
+        InputStream reader = fileUtils.readFile(file);
+        String checksum = checksumUtils.getChecksum(file);
+        Integer minValue = numberSequenceService.getMinValue(checksum, reader);
         return responseUtils.createResponse(minValue);
     }
 
@@ -72,8 +78,9 @@ public class NumberSequenceMultipartFileController {
     @PostMapping(path = "/get-median", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<Double>> getMedian(@RequestParam("textFile") MultipartFile file)
             throws IOException {
-        BufferedReader reader = fileUtils.readFile(file);
-        Double median = numberSequenceService.getMedian(reader);
+        InputStream reader = fileUtils.readFile(file);
+        String checksum = checksumUtils.getChecksum(file);
+        Double median = numberSequenceService.getMedian(checksum, reader);
         return responseUtils.createResponse(median);
     }
 
@@ -81,8 +88,9 @@ public class NumberSequenceMultipartFileController {
     @PostMapping(path = "/get-mean", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponse<Double>> getMean(@RequestParam("textFile") MultipartFile file)
             throws IOException {
-        BufferedReader reader = fileUtils.readFile(file);
-        Double mean = numberSequenceService.getMean(reader);
+        InputStream reader = fileUtils.readFile(file);
+        String checksum = checksumUtils.getChecksum(file);
+        Double mean = numberSequenceService.getMean(checksum, reader);
         return responseUtils.createResponse(mean);
     }
 
@@ -91,8 +99,9 @@ public class NumberSequenceMultipartFileController {
     public ResponseEntity<ApiResponse<List<List<Integer>>>> getIncreasingSequence(
             @RequestParam("textFile") MultipartFile file)
             throws IOException, SequenceException {
-        BufferedReader reader = fileUtils.readFile(file);
-        List<List<Integer>> sequence = numberSequenceService.getLongestSequenceOfIncreasingNumbers(reader);
+        InputStream reader = fileUtils.readFile(file);
+        String checksum = checksumUtils.getChecksum(file);
+        List<List<Integer>> sequence = numberSequenceService.getLongestSequenceOfIncreasingNumbers(checksum, reader);
         return responseUtils.createResponse(sequence);
     }
 
@@ -101,8 +110,9 @@ public class NumberSequenceMultipartFileController {
     public ResponseEntity<ApiResponse<List<List<Integer>>>> getDecreasingSequence(
             @RequestParam("textFile") MultipartFile file)
             throws IOException, SequenceException {
-        BufferedReader reader = fileUtils.readFile(file);
-        List<List<Integer>> sequence = numberSequenceService.getLongestSequenceOfDecreasingNumbers(reader);
+        InputStream reader = fileUtils.readFile(file);
+        String checksum = checksumUtils.getChecksum(file);
+        List<List<Integer>> sequence = numberSequenceService.getLongestSequenceOfDecreasingNumbers(checksum, reader);
         return responseUtils.createResponse(sequence);
     }
 }
