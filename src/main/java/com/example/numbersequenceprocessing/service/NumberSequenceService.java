@@ -5,6 +5,8 @@ import com.example.numbersequenceprocessing.data.enums.OperationType;
 import com.example.numbersequenceprocessing.data.exception.SequenceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -17,11 +19,15 @@ import java.util.stream.IntStream;
 
 @Slf4j
 @Service
+@Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class NumberSequenceService {
+
+    private final NumberSequenceService self;
 
     private final ChecksumKeyGenerator checksumKeyGenerator;
 
-    public NumberSequenceService(ChecksumKeyGenerator checksumKeyGenerator) {
+    public NumberSequenceService(NumberSequenceService self, ChecksumKeyGenerator checksumKeyGenerator) {
+        this.self = self;
         this.checksumKeyGenerator = checksumKeyGenerator;
     }
 
@@ -40,17 +46,17 @@ public class NumberSequenceService {
             throws IOException, SequenceException {
         switch (operation) {
             case MAX_VALUE:
-                return getMaxValue(checksum, reader);
+                return self.getMaxValue(checksum, reader);
             case MIN_VALUE:
-                return getMinValue(checksum, reader);
+                return self.getMinValue(checksum, reader);
             case MEDIAN:
-                return getMedian(checksum, reader);
+                return self.getMedian(checksum, reader);
             case MEAN:
-                return getMean(checksum, reader);
+                return self.getMean(checksum, reader);
             case INCREASING_SEQUENCE:
-                return getLongestSequenceOfIncreasingNumbers(checksum, reader);
+                return self.getLongestSequenceOfIncreasingNumbers(checksum, reader);
             case DECREASING_SEQUENCE:
-                return getLongestSequenceOfDecreasingNumbers(checksum, reader);
+                return self.getLongestSequenceOfDecreasingNumbers(checksum, reader);
             default:
                 throw new IllegalStateException("Provided unsupported operation");
         }
