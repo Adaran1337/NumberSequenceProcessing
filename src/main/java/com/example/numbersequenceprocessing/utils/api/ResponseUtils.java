@@ -31,7 +31,7 @@ public class ResponseUtils {
      */
     public ResponseEntity<ApiErrorResponse> createErrorResponse(Throwable th, String message, HttpStatus status) {
         ApiErrorResponse response = new ApiErrorResponse();
-        response.setStatus(status.name());
+        response.setStatus(status);
         response.setMessage(message);
         response.setDebugMessage(th.getMessage());
 
