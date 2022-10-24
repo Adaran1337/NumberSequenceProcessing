@@ -1,8 +1,8 @@
 # NumberSequenceProcessing
+### Description:
+The service allows you to process numeric data from a txt file. Perform some operations on the file by means of post requests to rest api.
 
-The service allows you to process numeric data from a txt file.
-
-The following operations are currently available:
+### The following operations are currently available:
 1. maximum number in the file;
 2. minimum number in the file;
 3. median;
@@ -10,13 +10,14 @@ The following operations are currently available:
 5. the longest sequence of consecutive numbers, which is increasing;
 6. the longest sequence of consecutive numbers, which is decreasing.
 
-The results are output in json or xml formats. The format can be changed by adding header `accept:application/<desired format type>`
+### Project Features:
+- The results are output in json or xml formats. The format can be changed by adding header `accept:application/<desired format type>`
 
-A file can be passed as a path to it in a request or in binary form in a post request
+- A file can be passed as a path to it in a request or in binary form in a post request
 
-All operations with files are cached, which speeds up the output
+- All operations with files are cached, which speeds up the output
 
-Available file transfer paths:
+### Available file transfer paths:
 
 `<path_to_your_server>/api/` - Passing files by path
 
